@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('pedido', function (Blueprint $table) {
-                 $table->id();
-            $table->string('pedidos');
-             $table->string('departamento');
-              $table->integer('quantidade_pedido');
-              $table->timestamps();
+        schema::create('funcionario', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('usuario_id');
+            $table->foreign('usuario_id')->references('id')->on('usuario')->onDelete('cascade');
+            $table->string('nivel_acesso');
+            $table->timestamps();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pedido');
+        //
     }
 };

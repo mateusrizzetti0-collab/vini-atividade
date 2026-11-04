@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Hash;
+use App\models\usuarioToken;
 
 class UsuarioController extends Controller
 {
@@ -106,6 +107,45 @@ public function deletar_usuario(request $request){
             return response()->json(['message' => 'Usuário deletado com sucesso!','erro' =>'n'], 200);
         }catch(\throwable $th){
            return response()->json(['message' => 'Erro ao deletar usuário', 'erro' => 'S', 'msg_error' => $th->getMessage()], 200);
+        }
+    }
+
+    public function login(request $request){
+        $request->validate([
+            'email' => 'required',
+            'senha' => 'required',
+        ]);
+
+        $usuario = Usuario::where('email', $request->email)->first();
+        if($usuario){
+           if(hash::check($request->senha, $usuario->senha)){
+            $Usuario_token = new \App\Models\UsuarioToken();
+            $Usuario_token->usuario_id = $usuario->id;
+            $Usuario_token->token = hash::make($usuario->id . $usuario->email . now());
+            $Usuario_token->valido_ate = now()->addDays(7);
+            $Usuario_token->save();
+            return response()->json(['message' => 'Login realizado com sucesso!', 'erro' => 'n', 'token' => $Usuario_token->token], 200);
+
+           }else{
+            return response()->json(['message' => 'Usuario ou Senha incorreta', 'erro' => 'S'], 200);
+           }
+        
+        }else{
+            return response()->json(['message' => 'Email não encontrado', 'erro' => 'S'], 200);
+        }
+    }
+
+    public function logout(request $request){
+        $request->validate([
+            'usuario_id' => 'required|integer',
+            'token' => 'required',
+        ]);
+        $usuario_token = UsuarioToken::where('token', $request->token)->first();
+        if($usuario_token){
+            $usuario_token->delete();
+            return response()->json(['message' => 'Logout realizado com sucesso!', 'erro' => 'n'], 200);
+        }else{
+            return response()->json(['message' => 'Token inválido', 'erro' => 'S'], 200);
         }
     }
 

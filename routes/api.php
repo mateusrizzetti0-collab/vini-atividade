@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\ProdutoController;
-use App\Http\Controllers\PedidosController;
+use App\Http\Controllers\produtoController;
+use App\Http\Controllers\PedidoController;
+use App\http\middleware\LoginApimiddleware;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,9 +21,11 @@ Route::get('/usuarios', [UsuarioController::class, 'listar_usuarios']);
 
 Route::get('/usuarios_simples', [UsuarioController::class, 'listar_usuario_simples']);
 
-Route::put('/usuario_alterar', [UsuarioController::class, 'alterar_usuario']);
+Route::put('/usuario_alterar', [UsuarioController::class, 'alterar_usuario'])->middleware(LoginApimiddleware::class);
 
-Route::delete('/deletar_usuario', [UsuarioController::class, 'deletar_usuario']);
+Route::delete('/deletar_usuario', [UsuarioController::class, 'deletar_usuario'])->middleware(LoginApimiddleware::class);
+
+Route::post('/login', [UsuarioController::class, 'login']);
 
 
 Route::post('/salvar_funcionario', [FuncionarioController::class, 'salvar_funcionario']);
@@ -43,9 +46,12 @@ route::get('/listar_produtos', [ProdutoController::class, 'listar_produtos']);
 route::put('/alterar_produto', [ProdutoController::class, 'alterar_produto']);
 route::delete('/deletar_produto', [ProdutoController::class, 'deletar_produto']);
 
-route::post('/salvar_pedido', [PedidosController::class, 'salvar_pedido']);
-route::get('/ver_pedido', [PedidosController::class, 'ver_pedido']);
-route::get('/listar_pedidos', [PedidosController::class, 'listar_pedidos']);  
-route::put('/alterar_pedido', [PedidosController::class, 'alterar_pedido']);
-route::delete('/deletar_pedido', [PedidosController::class, 'deletar_pedido']);
+route::post('/salvar_pedido', [PedidoController::class, 'salvar_pedido']);
+route::get('/ver_pedido', [PedidoController::class, 'ver_pedido']);
+route::get('/listar_pedidos', [PedidoController::class, 'listar_pedidos']);  
+route::put('/alterar_pedido', [PedidoController::class, 'alterar_pedido']);
+route::delete('/deletar_pedido', [PedidoController::class, 'deletar_pedido']);
+
+Route::post('/login', [UsuarioController::class, 'login']);
+Route::post('/logout', [UsuarioController::class, 'logout']);
 

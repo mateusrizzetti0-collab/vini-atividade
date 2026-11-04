@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\prouduto;
+use App\Models\produto;
 use Illuminate\Support\Facades\Hash;
 
 class produtoController extends Controller
@@ -16,8 +16,8 @@ class produtoController extends Controller
        $request->validate([
           'nome' => 'required|string|max:255',
           'descricao' => 'required|string',
-          'preco' => 'required|numeric|min:0',
-          'categoria_id' => 'required|integer|exists:categoria,id'
+          'tipo' => 'required|string|max:255',
+          'categoria_id' => 'required|integer'
           
            
         ]);
@@ -25,7 +25,7 @@ class produtoController extends Controller
             $produto = new produto();
             $produto->nome = $request->input('nome');
             $produto->descricao = $request->input('descricao');
-            $produto->preco = $request->input('preco');
+            $produto->tipo = $request->input('tipo');
             $produto->categoria_id = $request->input('categoria_id');
             $produto->save();
             return response()->json(['message' => 'produto cadastrado com sucesso!', 'erro' => 'n'], 200);
@@ -57,7 +57,7 @@ class produtoController extends Controller
             'id_produto' => 'required|integer|exists:produto,id_produto',
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
-            'preco' => 'required|numeric|min:0',
+            'tipo' => 'required|string|max:255',
             'categoria_id' => 'required|integer|exists:categoria,id'
         ]);
         try {
@@ -70,7 +70,7 @@ class produtoController extends Controller
           //  $produto->descricao = $request->input('descricao');
             produto::updateOrInsert(
                 ['id_produto' => $request->input('id_produto')],
-                ['nome' => $request->input('nome'), 'descricao' => $request->input('descricao'), 'preco' => $request->input('preco'), 'categoria_id' => $request->input('categoria_id')]
+                ['nome' => $request->input('nome'), 'descricao' => $request->input('descricao'), 'tipo' => $request->input('tipo'), 'categoria_id' => $request->input('categoria_id')]
             );
             return response()->json(['message' => 'Produto alterado com sucesso!', 'erro' => 'n'], 200);
 

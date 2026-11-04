@@ -16,15 +16,14 @@ class pedidoController extends Controller
        $request->validate([
             'data_pedido' => 'required|string|max:255',
             'status' => 'required|string',
-            'id_pedido' => 'required|integer',
-            'id' => 'required|integer'
+            'usuario_id' => 'required|integer',
+            
         ]);
         try {
             $pedido = new pedido();
             $pedido->data_pedido = $request->input('data_pedido');
             $pedido->status = $request->input('status');
-            $pedido->id_categoria = $request->input('id_pedido');
-            $pedido->id = $request->input('id');
+            $pedido->usuario_id = $request->input('usuario_id');
             $pedido->save();
             return response()->json(['message' => 'pedido cadastrado com sucesso!', 'erro' => 'n'], 200);
         }catch(\throwable $th){
@@ -52,14 +51,13 @@ class pedidoController extends Controller
 
     public function alterar_pedido(request $request){
        $request->validate([
-            'id_pedido' => 'required|integer|exists:pedido,id_pedido',
             'data_pedido' => 'required|string|max:255',
-            'status' => 'required|string',
-            'id' => 'required|integer|exists:pedido,id'
+            'status' => 'required|integer|exists:pedido,id_pedido',
+            'usuario_id' => 'required|integer|exists:pedido,usuario_id'
 
         ]);
         try {
-            $pedido =  pedido::where('id_pedido', "=", $request->input('id_pedido'))->first();
+            $pedido =  pedido::where('id_pedido', "=", $request->input('id_pedido'))->where('usuario_id', "=", $request->input('usuario_id'))->first();
             if (!$pedido) {
                 return response()->json(['message' => 'Pedido não encontrado', 'erro' => 'S'], 200);
             }
@@ -68,7 +66,7 @@ class pedidoController extends Controller
           //  $pedido->descricao = $request->input('descricao');
             pedido::updateOrInsert(
                 ['id_pedido' => $request->input('id_pedido')],
-                ['data_pedido' => $request->input('data_pedido'), 'status' => $request->input('status'), 'id' => $request->input('id')]
+                ['data_pedido' => $request->input('data_pedido'), 'status' => $request->input('status'), 'usuario_id' => $request->input('usuario_id')]
             );
             return response()->json(['message' => 'Pedido alterado com sucesso!', 'erro' => 'n'], 200);
 
